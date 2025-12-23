@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>互动绘本</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>飞象老师</title>
   <style>
     * {
       margin: 0;
@@ -14,9 +15,9 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       overflow: hidden;
-      background-color: #fff;
     }
 
+    /* 容器样式 */
     .iframe-container {
       box-sizing: border-box;
       padding: 56px 20px 20px 20px;
@@ -27,14 +28,27 @@
 
     /* 移动端适配样式 */
     .iframe-container.mobile {
-      padding: 50px 0 0 0;
-    }
-    
-    .iframe-container.mobile .content-iframe {
-      border: transparent;
-      border-radius: 0;
+      padding: 0.48rem 0 0 0;
+
+      .watermark-overlay {
+        height: 0.48rem;
+      }
+
+      .content-iframe {
+        border: transparent;
+        border-radius: 0;
+      }
+      
+      .watermark-logo {
+        height: 0.24rem; /* 移动端Logo高度适配 */
+      }
+      
+      .watermark-content {
+        padding: 0 0.16rem;
+      }
     }
 
+    /* Iframe 主体 */
     .content-iframe {
       width: 100%;
       height: 100%;
@@ -44,7 +58,7 @@
       border-radius: 16px;
     }
 
-    /* --- 核心修改：顶部 LOGO 栏样式 --- */
+    /* 顶部导航栏 (黄色背景) */
     .watermark-overlay {
       position: fixed;
       top: 0;
@@ -54,51 +68,50 @@
       z-index: 1000;
       display: flex;
       align-items: center;
-      /* 背景改为黄色 */
-      background-color: #FDD95A; 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      background-color: #FDD95A; /* 修改背景色为黄色 */
     }
 
     .watermark-content {
       width: 100%;
       display: flex;
       align-items: center;
-      /* 内容改为左对齐 */
-      justify-content: flex-start; 
-      padding: 0 20px;
+      justify-content: flex-start; /* 左对齐 */
+      padding: 0 32px;
     }
 
-    /* Logo 图片样式 */
-    .custom-logo-img {
-      height: 36px; 
+    /* Logo 容器 */
+    .watermark-logo {
+      height: 32px; /* 限制 Logo 高度，保持比例 */
+      display: flex;
+      align-items: center;
+    }
+
+    .watermark-logo img {
+      height: 100%;
       width: auto;
       display: block;
-      object-fit: contain;
     }
 
   </style>
 </head>
 
 <body>
-
   <div class="iframe-container">
-
     <div class="watermark-overlay">
       <div class="watermark-content">
-        <img src="LOGO.png" alt="Logo" class="custom-logo-img">
+        <div class="watermark-logo">
+          <img src="LOGO.png" alt="Logo">
+        </div>
       </div>
     </div>
 
     <iframe class="content-iframe"
-      src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/document/5doLiDu2o6LymR6nVRY8Lm.html"
-      frameborder="0"
-      allow="microphone *; camera *; autoplay *;">
+      src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/workflow/file/document/SefXxhScBCT9CXYkewqkxQ.html"
+      frameborder="0">
     </iframe>
-
   </div>
 
   <script>
-    // --- 移动端屏幕适配逻辑 ---
     function adjustRem() {
       const pcBaseWidth = 375 // 设计稿基准
       const width = document.documentElement.clientWidth
@@ -107,37 +120,34 @@
 
     function getIsMobile() {
       const width = document.documentElement.clientWidth
+      // 简单的移动端检测逻辑
       const isMobile = /Android|webOS|iPhone|iPod|BlackBerry|iPad|Windows Phone|Mobile/i.test(navigator.userAgent) || width <= 768
       return isMobile
     }
 
-    // 移动端检测逻辑
-    function checkMobileLayout() {
+    function handleResize() {
       const isMobile = getIsMobile()
-      if (isMobile) {
-        adjustRem()
-      }
-      
       const iframeContainer = document.querySelector('.iframe-container');
 
-      // 根据设备类型添加/移除 mobile 类
-      if (iframeContainer) {
-        if (isMobile) {
-          iframeContainer.classList.add('mobile');
-        } else {
-          iframeContainer.classList.remove('mobile');
-        }
+      // 移动端适配逻辑：调整REM并添加 CSS 类
+      if (isMobile) {
+        adjustRem()
+        if (iframeContainer) iframeContainer.classList.add('mobile');
+      } else {
+        if (iframeContainer) iframeContainer.classList.remove('mobile');
       }
     }
 
-    function handleResize() {
-      checkMobileLayout();
-    }
-
-    // 初始化事件监听
+    // 初始化和监听窗口变化
     window.addEventListener('resize', handleResize);
-    document.addEventListener('DOMContentLoaded', checkMobileLayout);
+    document.addEventListener('DOMContentLoaded', handleResize);
 
+    // 清理事件（可选）
+    window.addEventListener('beforeunload', function() {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('DOMContentLoaded', handleResize);
+    });
   </script>
 </body>
+
 </html>
